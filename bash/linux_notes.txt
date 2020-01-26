@@ -1,0 +1,442 @@
+--------Linux notes--------
+
+*** Commands ***
+
+- ls
+	"ls -F" reveals file type
+	"ls -d" lists on directories
+	"ls -r" reverse order
+	"ls -t" sort by time
+	"ls -R" List recursively
+	can use ls s* : regular expression
+- cd 
+	"cd -"" places you into the previous directory
+- pwd
+- cat 
+- echo 
+- man
+	go to top - g
+	go to bottom - G
+	-k to search for a command 
+- exit
+- clear
+- which
+- wc 
+- tac
+- mkdir 
+- rmdir
+- rm
+	rm -r dir : removes the directory its contents recursively
+- chmod
+	chmod u+rwx, g-r file.txt
+	chmod a=r file.txt
+-chgrp -> Change the group of a file
+- umask -> Sets the file creation mask [opposite of chmod]
+- find
+	find -mtime x - find files that are x days old
+	find -size num - find files that are of a particular size
+	find -newer file - find files that are newer than a given file
+	find -exec command {} \; - run a command against all the files found
+	find -type d -newer file.txt - all directories which are newer than file.txt
+	find . -mtime +1 -mtime -30 - find files which are atleast 1 day old but less than 30 days old 
+	find . -size +1M -exec ls -lh {} \; - find files which are greater than 1MB in size and run ls-lh on each entry 
+- file : Tells what kind of file it is
+- locate : index based file search
+- more 
+- less
+- head
+- tail
+- vi
+- vim
+- view : read only vim
+- cp 
+	cp -i : interactive mode
+	cp -r : recursively copy 
+	cp -r dir1 dir2 dir3 : recursively copy dir1 and dir2 into dir3
+- diff : Diff between files
+- sdiff : Diff between files
+- vimdiff : Diff between files
+- mv
+	mv -i source destination : interactive mode 
+- sort
+	sort -K F : sort by key
+	sort -r : sort in reverse order
+	sort -u : unique
+- tar : Bundle some files together and compress them
+	-c : create a tar archive
+	-x : Extract files from an archive
+	-t : Table of contents
+	-v : verbose
+	-z : use compression
+	-f : use this file
+- gzip
+- gunzip
+- gzcat
+- zcat
+- du
+	du -k : in KB
+	du -h  : Human relatable
+- wildcards
+	- character classes
+- grep 
+	-i : Case insensitive search
+	-c : Count the number of occurences in a file
+	-n : Precede output with line numbers
+	-v : Invert match
+- strings : Search within a binary file
+- | (pipe)
+	command-output | command-input
+- cut [file] : Cut out pieces of a file
+	-d 
+	-f 
+
+- tr : translate one string to another
+- column : Show in table format
+- scp : Secure copy
+- sftp : SSH file transfer protocol 
+- ftp (not secure. Plain text communication)
+- alias 
+- unalias
+- printenv
+	export VAR="value" : Creating an env variable
+- unset : Unset the value of an env variable
+- date : returns the date
+- ps : Display processes associated with current session
+	-e : all processes
+	-f : full display
+	-u username : processes for a user
+	-p pid : more info about a process
+	-eH : process tree
+	-e --forest : Display a process tree
+- pstree
+- top
+- htop
+- bg [%num] : Send a suspended process to the background
+- fg [%num] : Bring a background process to the foreground
+- kill pid : Kill a process based on pid
+	-l : List all possible signals you can send
+	kill -9 pid : Send kill signal
+	kill -TERM pid : Send term signal
+- jobs [%num] : List jobs
+- crontab
+	-l : list your cron jobs
+	-e : Edit your cron jobs
+	-r : Remove all your cron jobs
+- mail
+- su
+	No arguments = become superuser
+	Current env is passed into the new shell unless you specify a '-'
+	-c 'execute me' : Specify a command to be executed
+- whoami : Displays the effective username
+- sudo : Superuser do
+	-l : List available commands
+	command : Run as root
+	-u user command : Run command as this user
+	su : switch to superuser account
+	-s : start a shell as root
+	-u user -s : Start a shell as another user
+- visudo : edits /etc/sudoers file
+	user host=(users)[NOPASSWD:]commands
+-history: displays the shell history
+	HISTSIZE : Number of commands to retain [default = 500]
+	!(called bang) : History expansion syntax
+	!! : repeat the previous command (bang bang)
+	!string: repeat the most recent command starting with string
+	!:2 : Pull out second argument to the previous command
+	!^ : Represents the first argument to a command
+	!$ : Represents the last argument to a command
+	ctrl-r : Search history
+		Cycle through matches by hitting ctrl-r again
+		ctrl-g: Cancel search
+- screen
+- yum : Package manager for Linux distributions which use RPM packages
+	search string: Search for string
+	info [package] : Display package info
+	install [-y] package : 	Install a package
+	remove : Remove a package 
+- rpm
+	-qa : List all installed packages
+	-qf /path/to/file : List the package this file belongs to
+	-ql package :  List the files that make up that package
+	-ivh package.rpm : Install a package using an .rpm file
+	-e package_name: uninstall a package
+- apt-cache
+	search string : Search fora string
+	show package: Show package info
+- apt-get 
+	install [-y] package : Install a package
+	remove package: Remove a package [Leaves config]
+	purge package: Remove a package [removes config]
+- dpkg : Interact with the package manager
+	-l : List installed packages
+	-S /path/to/file : List file's package
+	-L : List all files within a package
+	-i package.deb: Install a package
+- dmesg 
+	-T : Human readable timestamp
+- systemctl
+	isolate target : Change to a desired target
+	get-default : Get default run level
+- telinit : Change run levels
+- reboot
+- shutdown
+	-r +5 "Rebooting soon": Rebooting in 5 mins
+- logger: generate syslog messages
+	-p FACILITY.SEVERITY : Set facility and severity. Defaults to USER>NOTICE
+	-t TAG : tag your message
+- logrotate : Rotate, compress, remove or mail log files. Automated way to manage log files
+	config is in /etc/logrotate.conf which imports config from /etc/logrotate.d
+	-fv (force,verbose) /etc/logrotate.conf : test updated config
+- df (disk free command): List of mount points which contain storage devices
+	-h : Human readable format
+- fdisk
+	-l : List all the available storage attached to your system
+- mkfs : Make a file system
+	-t TYPE DEVICE : Type(ext4) Device(/dev/sdb2)
+- mount : Mount a partition
+	mount /dev/sdb3 /opt
+- umount : Unmount a partition
+- lsblk : To view labels and UUIDs of disks
+	-f 
+	-p : Full path
+- blkid : View UUID of partitions
+- mkswap : Create swap space
+- swapon : Activate swap space
+- uname: Print out system information
+	-a 
+- lvmdiskscan
+- pvcreate
+- pvs
+- vgcreate
+- vgs
+- lvcreate
+	-L : size ex - 20G
+	- m 1 : Number of additional copies
+- lvs
+- lvdisplay
+- vgextend
+- lvremove
+- vgreduce
+- pvmove
+- newgrp
+- useradd
+	-c  "COMMENT"
+	-m
+	-s
+	-r
+	-u  
+	-g
+	-G
+- passwd
+- userdel
+- usermod
+	- c : Comment
+	- g : Change primary gorup
+	- G : Change groups the account belongs to
+	- s path/to/shell: Change shell
+- groups
+- groupadd
+- groupmod
+- ip : Outputs the ip and network interfaces	
+	address show
+- ifconfig
+- hostname : Set hostname of the machine you're on
+- host
+- dig 
+- ifup
+- ifdown
+- ping
+- traceroute
+- netstat
+- tcpdump
+- telnet
+
+
+
+
+*** Notes ***
+file descriptors are numbers which represent open files
+Linux represents everything as a file
+/dev/null : Null device
+tgz means a tar file which has been compressed with gzip
+DO NOT USE SPACES when naming
+*Learn window management*
+*Become kickass at vim*
+*Practice regular expressions*
+If a file has executable permissions set, its most likely an executable
+/etc/passwd contains all the accounts on a linux system
+Env customisation - $PS1 and $prompt env variables
+bash_profile is the main config file for the bash shell
+Ctrl-c kills the current foreground process
+ctrl-z suspends the current foreground process
+current job = Last job that was stopped in foreground or the last job that was started in the background
+& starts a job in the background eg - ./long_running &
+When you start a job in the background, the job number and pid are sent to stdout
+%% or %+ represent the current job
+%- is the previous job
+Cron - time based scheduling system that starts when the system boots
+/etc/sudoers contains a list of users and what commands those users can run 
+Shell history is extremely useful.
+Bash keeps history in memory and only writes to disk on exit - [~/.bash_history, ~/.history, ~/.histfile]
+RPM Package format - RedHat, CentOS, Fedora, Oracle Linux, Scientific Linux
+To install or remove software you need root privileges 
+DEB distros - Debian, Linux mint and Ubuntu and use apt(advanced packaging tool) as their package manager
+
+*** Linux boot process *** 
+
+BIOS [Basic input/output system]
+Special firmware
+First piece of software that is run when a computer is powered on
+Operating system independent
+It tests the underlying hardware and to load the bootloader
+Performs a POST (Power on self test)  - Performs basic checks on hardware components such as the CPU, Memory and 
+Storage devices.
+Only if POST succeeds does the BIOS load the bootloader
+BIOS knows about all the bootable devices - Hard disks, USB drives and DVD drives. The search order can be changed for devices
+
+
+*** Bootloaders ***
+GRUB Bootloader - Grand unified bootloader
+Older systems can use the LILO (Linux Loader) bootloader 
+Bootloaders start the operating system with different options if needed
+
+Initial RAM disk (initrd) - A temporary file system which is loaded into memory when the system boots
+Contains helpers which perform hardware detection and load the necessary modules (drivers) required to load the permanent OS file system 
+
+If the root filesystem is stored on a LVM(Logical Volume Manager) Volume the initrd image will contain the kernel modules required to mount that logical volume as the root file system
+
+Once the root filesystem is mounted, initrd's task is done and the OS continues loading from the real file system
+
+/boot contains initrd, kernel, bootloader config and any files needed to boot the OS 
+Kernal is present as vmlinux or vmlinuz(compressed)
+Kernel ring buffer contains messages from the linux kernel
+/var/log/dmesg contains the full set of logs from system boot
+
+*** Runlevels ***
+Linux uses run levels to determine which processes and services to start
+Run levels 0-6
+Run levels were controlled by the init program
+/etc/inittab -> init config
+Use systemd instead (upstart is another option)
+Systemd uses targets instead which are listed in /lib/systemd/system
+
+
+*** Logging ***
+Linux uses the syslog standard for message logging
+Categorise messages based on facility and severity
+Syslog servers - syslogd, rsyslog, syslog-ng
+rsyslog config - /etc/rsyslog.conf
+Include additional config file using $IncludeConfig /etc/rsyslog.d/*.conf
+Logging rules - Selector field and Action field
+Selector field format - FACILITY.SEVERITY
+eg - mail.* /var/log/mail.log : Write mail logs of any severity to this path
+eg - mail.* -/var/log/mail.log : Don't sync for every log operation. Called caching mode and it improves I/O performance. May lose logs if system crashes
+Less critical messages can use caching
+fdisk, gdisk, parted : Disk partitioning utils
+Use logger to test new configs or generate logs from your own shell scripts
+
+*** Disk Management *** 
+Partitioning - dividing a disk into parts
+	Paritioning scheme eg - 1) OS, 2) User home directories
+	Protects the overall system
+	Prevents a user program from using up all the memory which will interfere with system processes
+
+MBR - Master boot record : is a boot sector at the beginning of a storage device
+	The partition table dictates how the logical partitions are made on the disk 
+	Can only address 2TB of disk space so being phased out by the GPT (GUID Partition table)
+	Max 4 primary partitions
+	Extended partitions allow for logical partitions
+
+GPT - GUID Partition table
+	Part of Unified Extensible Firmware Interface standard
+	UEFI is replacing BIOS
+	Supports up to 128 partitions
+	Supports storage devices up to 9.4ZB
+	Not supported everywhere yet
+
+Mount point is a directory used to access data on a partition 
+
+*** File systems *** 
+Before a partition can be used on a linux system it needs a file system
+ext4 was created for linux. ZFS is another example
+ls -l /sbin/mkfs* prints out all the file system builders. Can use man for all these
+Making mounts permanent requires editing /etc/fstab
+fstab columns - (device, mount point, file system type, mount options, dump, fsck order)
+Each file system type has a util that allows you to modify the label assigned to it
+The GECOS field
+All shells are in /etc/shells
+/etc/skel contains shell config files
+/etc/group file has group details
+/etc/gsahdow passwords for groups
+
+
+*** LVM ***
+// A full lecture on its own
+
+
+*** User management ***
+Each user account on a linux system is associated with a UID and a username
+Each account has a default group to which it belongs, a shell to execute when the user logs into the system and a home directory
+/etc/passwd stores configs for each user
+First entry in /etc/passwd is the root user
+Format in /etc/passwd - username:password:{user_id}:{default group_id}:comments:home_dir:shell 
+Keep the usernames less than 8 characters
+/etc/shadow contains the encrypted passwords
+UID for root is 0
+System accounts have UID < 1000 [configured through /etc/logins.defs]
+To prevent interactive use of an account, use /usr/bin/nologin or /bin/false as the shell is /etc/passwd for that user
+Shell field can also be used to execute a program which can force users into a menu driven application that only allows them access to certain actions
+ /etc/shadow format - {username}:{encrypted password}:{number of days since the password has been changed}:{number of days before the password can be changed}:{number of days before the password must be changed}: {number of days to warn the user that their password will expire}:{number of days after the password has expired that the account is disabled}:{number of days that an account has been disabled}: {Reserved}
+
+
+Group details are stored in the /etc/group file
+First entry is the root group 
+format - group_name:password:GID:account1,accountN
+Passwords are stored /etc/gshadow file
+
+
+*** Networking *** 
+127.0.0.1 is the loopback address
+A host is a device connected to a network
+FQDN - Domain name and top level domain name [Fully Qualified Domain Name] : webprod.comany.com
+TLD - Top level domain : .com, .org
+Subdomains - webprod.ny.us.company.com
+Change /etc/hostname to change the hostname
+host and dig can resolve a hostname or an ipaddress
+Edit /etc/nsswitch.conf to change the order in which look ups are performed
+NSS = Name service switch
+Ports identify the services on a host
+When a service starts on a system it binds itself to a port on the system and listens for traffic on its port
+Port range - 1 to 65535
+1 - 1023 = Well known/System ports. Requires sudo to open these ports 
+/etc/services translates human readable names into port numbers
+
+Ping sends ICMP packets
+tcpdump - packet sniffer
+
+
+
+*** Shell script ***
+Commands listed in a shell script are executed by an interpreter, which here is the shell itself
+before you can execute a shell script it should have the executable bit set. chmod 755 script.sh
+#! -> shebang
+#! tells the what the interpreter is for this script
+Executing a shell script internally just converts to <interpreter> <path to script>
+Enclose variables in quotes to avoid side effects when performing tests
+sudo !! : Repeat as root
+!* : Take all arguments from the previous command
+!$ : Last item interacted with in a command line
+sshd - SSH daemon or server process
+sticky bit
+
+
+TODO 
+Can't explain Run Levels
+Learn about systemctl and systemd
+Whats a RAID 1?
+sudo service sshd start - what is service
+Need to practice shell scripting
+
+
+http://www.opsschool.org/reading_list.html
+https://www.digitalocean.com/community/tutorials?q=envoy

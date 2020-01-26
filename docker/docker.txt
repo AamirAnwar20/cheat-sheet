@@ -1,0 +1,108 @@
+*** Docker Commands *** 
+
+docker info
+docker images 
+docker run busybox:1.24 echo "Hello World"
+	-i : Interactive mode
+	-t : Creates a pseudo-TTY[False terminal] which attaches stdin and stdout
+	-d : Launch in background
+	--rm : Remove container on stopping
+	--name: Specify the container name
+	-p : Port mapping
+	--link : Create a link to other containers
+	--net : Specify network type [none]
+docker ps : Find all the running containers
+	-a:  Show all containers 
+docker inspect : Show low level information about a container or an image
+	Shows LogPath and ImageID
+docker logs : Show logs of a running container
+docker history: Show layers of an image
+docker commit : Save changes we made to the containers file system to a new image
+docker build : Build an image using instructions mentioned in the docker file
+	--no-cache=true : Invalidate docker cache
+docker tag <image-id> <repo-name>:<tag> 
+docker login : Login to your docker account to push images to the associated repo
+docker push <repo_name>/<tag>
+docker exec : Run a command in a running container
+docker stop <container_name> : Stop a running container
+docker-compose 
+	up : Build images for all the services in the yml file
+		-d : Run in background
+	ps : Show containers managed by docker-compose
+	logs: Coloured and aggregated logs
+	stop : Stop all running conatiners without removing
+	rm : Remove all containers
+	build : Rebuild any images from the dockerfiles	
+	run : Run a one time command against one of the services
+docker network 
+	ls : List networks
+	inspect <network_name>
+	create : Create a network 
+		--driver : Specify the type of network 
+		<name> : Name of the network
+	connect: Connect a container to a network (Adds a network interface)
+	disconnect: Remove a container from a network (Removes a network interface)
+
+
+Dockerfile  
+	- 1st instruction has to be FROM <base-image>
+	- RUN sends a command to the shell
+	- Club RUN commands into one command when possible. This minimises the number of layers when creating a new image
+	- Mention arguments to command alphabetically
+	- CMD : Specifies what command you want to run when the container starts up. Falls back to CMD in the base image if not specified
+	- COPY : Copies new files and directories from build context and adds them to the file system of the container
+	- ADD : Can download files and add to the container, unpack compressed files
+	- Better to use COPY. More transparency
+	- Images tagged latest will not be updated if someone pushes a higher tag number to the repo
+	- Avoid using latest stag. Use a version
+	- USER : Specify the user account
+	- WORKDIR: 	Sets the working directory for any RUN or CMD
+
+Container links : Allow information transfer from one container to another  
+	-p is not needed for source containers. eg- redis
+	/etc/hosts has the ip-address the recepient container should hit 
+
+Docker compose 
+	Handles spinning up multiple containers
+	docker-compose.yml file
+	docker network is supported > version 2
+
+*** Docker Container Networking ***
+Docker uses the networking capabilities of the host machine operating system. A bridge networking interface (docker0) is provisioned on the host which will be used to bridge traffic from the outside network to the internal containers.
+
+Types
+	- None/Closed
+	- Bridge
+	- Host
+	- Overlay 
+
+None Network
+	- No network access to the outside world
+	- No container interface 
+	- Invoke this mode using '--net none' with 'docker run'
+	- Maximum security
+
+Bridge Network
+	- Containers on one bridge network cannot access containers on another bridge network 
+	- Adds a private network interface to a container
+	- Suitable when you want to setup a small network on a single host
+
+Host Network
+	- Adds a container on the host network stack. Least protected mode 
+	- Containers have full access to the hosts network interface 
+	- Containers are called open containers
+	- Low network security 
+	- No isolation
+	- Better performance 
+	- Avoid this mode
+
+Overlay Network
+	- Supports multi-host networking
+	- Docker swarm uses this
+
+Docker compose by default will setup a single network for all containers mentioned.
+
+*** Docker swarm ***
+	- A task is a unit of work
+	- Manager node
+	- Worker node
