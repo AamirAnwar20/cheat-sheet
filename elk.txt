@@ -1,0 +1,119 @@
+*** Elastic Search ***
+Distributed Lucene
+Horizontally scalable Lucene index
+Has shards 
+
+ELK Stack
+1. Elastic Search
+2. Logstash - Includes Filebeat and maybe kafka
+3. Kibana
+
+Components 
+- Documents
+    Every document has a unique ID and a type
+-Index
+    Highest level entity you can query and can contain a collection of documents
+
+Inverted Index
+TFIDF 
+
+Changes to elastic search 7
+document types are deprecated
+Elastic SQL is production ready 
+Changes to defaults (number of shards and replication)
+Lucene 8
+Bundled Java runtime
+cross cluster replication is prod ready 
+lifecycle management (ILM)
+HLRC - new java client
+
+Scalability
+An index is split into shards
+Documents are hashed to a particular shard
+Each shard may be on a different node in a cluster
+Every shard is a self contained lucene index of its own
+
+Primary and Replica shards
+You cannot change the number of primary shards in your cluster later on
+
+
+mapping is a schema definition 
+field types
+field index
+field analyzer - (standard, simple, whitespace, language)
+    character filters
+    tokenizer
+    token filter
+
+
+Documents are updated using versioning ->  _version 
+Play around with CRUD on an elastic search test server
+
+Concurrency
+    seq_number
+    _primary_term
+    retry_on_conflicts
+
+Need to reindex to change the mapping
+keyword fields allow exact matching of the search query
+Need to learn curl
+
+Parent/Child relationships
+
+Query lite search
+Queries can have json filters (lecuture 29)
+match_phrase to match phrases -> Phrase matching
+Do the hands on exercises
+
+Pagination
+from & size params
+limit number of search results
+
+To sort by string you can keep a another field which is not analysed in the document. A raw field for example
+
+Fuzzy quries - Levenstien edit distance
+Prefix Queries
+regexp queries are also possible
+autocomplete - match_phrase_prefix
+NGrams
+Completion suggesters
+
+
+Importing data
+Logstash, Beats, Lambda, Kinesis firehose, Kafka, Spark
+You can use a script and hit HTTP calls using curl
+You can use a client lib
+
+Logstash
+Install filebeat on the host
+JDBC driver to interact with Mysql
+Zookeeper with Kafka?
+
+Aggregations
+
+Audit trail
+index templates
+Capacity planning on number of shards
+index alias! Similar to symlinks
+
+Index lifecycle management
+hot
+warm
+cold
+delete
+Can put lifecycle policies
+64GB per machine RAM
+SSDs are better
+deadline or noop i/o scheduler
+Not CPU heavy
+Need a good network connection
+Avoid network attached storage
+Set HEAP_SIZE for Elastic search! Default is 1GB
+Don't cross 32GB
+Elastic Search runs on Java
+
+XPack - Monitoring [Great high level overview]
+elastic search sql cli [damn cool]
+Failover (y)
+Need atleast 3 nodes to elect a master
+Rolling restart

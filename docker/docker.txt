@@ -106,3 +106,7 @@ Docker compose by default will setup a single network for all containers mention
 	- A task is a unit of work
 	- Manager node
 	- Worker node
+	- An agent runs on each worker node and reports on the tasks assigned
+
+Further reading 
+https://www.level-up.one/dockers-monitoring-tools/

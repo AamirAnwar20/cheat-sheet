@@ -1,0 +1,18 @@
+// Slices
+// Make
+// Map
+// Structs
+// Embedded types and promotion of properties
+// Builtin package
+// TODO - Go modules
+// Unfurling
+
+Variadic parameters = 0 or more
+
+Assertion 
+.() -> is an assertion
+	switch h.(type) {
+	case person:
+	}
+
+Concurrency vs parallelism
