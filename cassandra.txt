@@ -1,0 +1,194 @@
+Link - cassandra.apache.org
+A distributed NoSQL database
+Big data technology - massive scalability
+eg - 1000 node cluster
+High availability ^
+Based on Dynamo and Bigtable
+Linear Scalability - No degradation of performance as you add nodes
+Nodes are identical
+No need for special hardware 
+Designed for realtime use cases
+Opposed to batch process based technologies
+A highly scalable, fault tolerant distributed NoSQL database that provides high availability
+
+
+Snitch - Node discovery 
+Simple snitch does not work across data centers
+
+Snitch keeps a config file on every node in the cluster of nodes
+Format : <IP of node> = <Data center>:<Rack number>
+
+Internal communication vs external communication(CQL or Thrift)
+Gossip - Nodes talk to each other (each node talks to up to 3 other nodes every second)
+
+Consistent Hashing - Even distribution of data across the nodes of a cluster
+To distribute rows a Paritioner is used - default Murmur3
+
+var/lib/cassandra - where data gets written to
+var/log/cassandra - logs
+/etc/cassandra - config
+
+
+nodetool - cli utility for cassandra
+nodetool status
+nodetool info
+nodetool ring
+
+CQL - Cassandra query language 
+Previously Thrift to talk to Cassandra
+
+Tools on JMX are used to monitor apache cassandra [say hi to java again] eg - nodetool
+
+In cassandra we call a database as a keyspace instead of schema
+Within a keyspace definition we can define tables
+
+Number of Replicas can be defined per data center
+Paritition key is the first primary key part
+You can define the sort order (CLUSTERING ORDER) based on a second field. Default Ascending
+Descending order degrades write performance but improves read performance
+Can't change clustering order afterwards
+
+COPY command to export or import from csv
+sstableloader tool - bulk loading. sstable is the file storage unit used by cassandra to store data on disk	 
+thrift cli can help view how data is stored in patitions
+
+When data is written to cassandra, it goes to the commit.log on disk (so we can replay in case of failure) and to the memory cache (Memcache)
+
+Once memcache is full, it is flushed to disk as an sstable
+For each table on each node there is a memcache
+sstable location - /var/lib/cassandra/data
+nodetool flush - Flush all memcache data to sstables
+
+*** Data modelling ***
+Joins do not exist
+Figure out which queries will be needed and THEN decide how to store data in cassandra
+Where clause queries should use the partition key
+Columns which don't have an index will be too slow so cassandra avoids running them.
+Create indexes for columns you want to query on. Also called Secondary Indexes
+For each secondary index cassandra creates a hidden table on each node in the cluster. This has no effect on the speed of the query
+For increasing a speed, instead of a secondary index create a table specifically for that index. Though you'll have to manage this table as opposed to cassandra handling the hidden table created for secondary indexes
+Always try to have the data required on a single node when querying
+
+Composite Parition key
+Great for time series data
+PRIMARY KEY ((vehicle_id, date), time) -> Two values that make up the paritition key
+Number of cells per paritition - 2 Billion
+All data for a single partition must be able to fit on disk on a node in the cluster
+
+Updates are just writes. Cassandra keeps writes based on timestamp and returns the latest one on a read operation
+
+SOURCE <cql file> // Put all commands in a file
+
+Delete commands create a tombstone which mark data for deletion
+This is done so that the replicas can know about the delete action
+gc_grace_seconds controls the time to wait before deleting
+For data to be removed, compaction needs to happen 
+Compaction - When sstables are combined to improve the performance of reads(fewer number of tables) and reclaim disk space for deleted data
+nodetool compact can trigger compaction although cassandra runs this from time to time
+Compaction will not remove the tombstone till gc_grace_seconds has elapsed
+Compaction runs when there are 4 sstables of similar size which are then merged into 1
+
+TTL is also available
+These marked with tombstones once they expire
+
+Min RAM per node = 8GB
+Prod - 32GB of ram per node
+Min cores = 4
+prod cores = 8
+Dont use shared disk storage
+SSD drives ftw
+Strive for more nodes and less data per node
+~ 500GB to 1TB per node
+Recommended bandwidth 1000 Mbps/second
+Ports : 7000(gossip), 9042(Native binary protocol used by java driver), 9160 Thrift client, 7199(JMX monitoring)
+Have a separate drive for the commit log for better write performance
+http://www.odbms.org/wp-content/uploads/2014/06/WP-DataStax-Enterprise-Reference-Architecture-2014.pdf
+
+
+Adding a new node to a cluster
+To add a new node
+- the node should have the same cluster name
+- IP address of atleast one of the existing nodes in the cluster
+IPAddress -> listen_address and rpc_address for each node 
+listen_address - So that other nodes can communicate with the node
+rpc_address - So that clients can communicate with the node
+
+Seed node : Just regular nodes that allow new nodes to join a cluster via their ip address
+Specify this in the cassandra.yaml file (Specify at least 2 for high availability)
+
+Adding a node to cluster is called Bootstrapping
+To bootstrap a node 
+- Same cluster name
+- Needs to be on a network that allows it to connect to atleast one seed node
+auto_bootstrap property should be true. Start accepting requests for its token ranges on successful bootstrap
+
+If you have to bootstrap multiple nodes, space this out with a time duration
+num_tokens - number of token ranges the node is responsible for [virtual nodes]
+or
+initial_token - endpoint for token range [older way]
+
+When a node is bootstrapped, the data it takes responsibility for is not removed from its previous owner. This is done in case the new node goes offline and takes the data down with it
+To ask cassandra to delete data from a node which that node does not have responsibility for use the cleanup command
+nodetool -h <ip address> cleanup
+
+cassandra-stress tool : Useful for stress testing Cassandra
+
+Monitoring 
+- nodetool
+- JConsole from JDK
+- OpsCenter GUI from DataStax
+
+nodetool info
+nodetool status
+nodetool ring
+nodetool cfstats 
+nodetool cfhistograms
+nodetool compactionstats
+All these communicate using JMX
+http://cassandra.apache.org/blog/
+
+Repair - updating a nodes data to be current when replication > 1
+Repair should be run atleast once on each node within gc_grace_seconds so that deleted data does not come back to life.
+for gc_grace_seconds = 10 days, repair once a week
+
+Changing the replication setting does not automatically start creating replicas. You need to run repair
+Stagger the repair of the nodes
+OpsCenter enterprise has an option to automate coninous repair
+Merkle Tree transmission happens on replication
+https://www.datastax.com/blog?topics=113
+
+Consistency level is set per read/write request. In general this is ONE
+ONE means 
+if we're doing a read request, only one of the replicas has to repond
+if we're doing a write request, only one of the replicas has to repond
+Other levels - TWO, THREE, QUOROM, LOCAL_QUOROM, ALL
+
+Hinted handoff [So cool!] - Enable writes even if one of nodes is down
+The coordinator node temporarily stores the write(3 hours default) on behalf of the node which is down
+
+Read repair - Have a repair happen as part of a read request
+Updates any outdated replicas
+default - 10% [1/10 requests triggers a read repair]
+Read repair happens in background. The data from the closest replica is sent and then the read repair happens
+
+
+Removing nodes
+nodetool  decommission [planned]
+nodetool  removenode  [for dead nodes]
+
+Decommission assigns the token ranges that the node was responsible for to other nodes and then streams the data from the node being decommissioned to the other nodes. It copies data to other nodes
+
+Before putting a node back into service[After decommissioning], clear the data.This is faster and avoids a repair operation.
+
+To completely remove data from a cassandra node, the data, commitlog and saved_caches directories need to be cleared
+
+Removing a dead node does two things -
+1. Assign token ranges the node was handling
+2. Send data on the node
+nodetool removenode <host_id>
+watch command? Watches status
+
+cassandra-rackdc.properties using GossipingPropertyFileSnitch will allow a new node to tell the other nodes about its rack and data center automatically
+Need to do a rolling restart on changing the snitch type
+Cassandra reads the cassandra.yaml file whenever it starts up
+Never restart all the nodes together. DO A ROLLING RESTART

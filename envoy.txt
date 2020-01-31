@@ -1,0 +1,58 @@
+*** Envoy ***
+
+Reverse proxy is a type of proxy which can direct an incoming client request and forward it to the server that can fulfill it.
+
+Load balancer (Synchornous Decoupling)
+Can route traffic based on the HTTP path
+Replace instances based on health checks
+
+Topics
+
+- Pricing model
+- Connection Draining
+- Health checks
+
+
+Pricing
+
+Pay for every hour your ALB runs
+Pay for number of Load Balancer Capacity Units
+
+LCU
+	New connection : 1 LCU for every 25 requests per second
+	Active Connections : 1 LCU for every 3000 active connections per minute
+	Bandwidth : 1 LCU for 2.22 Mbps
+	Only billed for the dimension with the highest number
+	Price = hours + n(LCU)
+
+Health checks
+	Interval - How often to perform health checks
+	Timeout - timeout < interval
+	Health Threshold - Number of successful health check callbacks after which a target is called healthy
+	Unhealthy -  Number of unsuccessful health check callbacks after which a target is called unhealthy
+
+*** Lecture ***
+
+Distributed systems best practices - 
+retry, rate limiting, circuit breaking and timeouts
+
+Envoy is a an out of process architecture
+https://github.com/Netflix/Hystrix
+https://github.com/twitter/finagle
+
+Envoy is an L3/L4 proxy. Can be used for raw bytes being sent over TCP, redis, mongo etc
+HTTP L7 filter architecture
+HTTP/2 proxy first 
+
+Performs Service Discovery
+Active[Send health check calls] and Passive[Look at traffic] health checking 
+Advanced load balancing - Shadowing, retry, kickass algorithms, stats:logging:tracing
+Authorisation and Authentication
+Edge proxy 
+Historically, people put nginx at the edge and use HAProxy in the middle
+Also the edge proxy and middle proxy perform 99% similar tasks
+
+Observability
+Envoy Manager xDS Server?
+Overall envoy stats dashboard [Looks at all the envoy sidecars]
+What are data planes? 

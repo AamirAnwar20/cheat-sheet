@@ -1,5 +1,8 @@
 *** Docker Commands *** 
 
+docker container start -ai 8126f77485e5 : Start a stopped container
+docker container top <container-name/id>
+docker version
 docker info
 docker images 
 docker run busybox:1.24 echo "Hello World"
@@ -15,6 +18,7 @@ docker ps : Find all the running containers
 	-a:  Show all containers 
 docker inspect : Show low level information about a container or an image
 	Shows LogPath and ImageID
+docker container stats: Container monitoring
 docker logs : Show logs of a running container
 docker history: Show layers of an image
 docker commit : Save changes we made to the containers file system to a new image
@@ -108,5 +112,13 @@ Docker compose by default will setup a single network for all containers mention
 	- Worker node
 	- An agent runs on each worker node and reports on the tasks assigned
 
+- Containers only run for as long as the command executed on starting up that container runs
+- docker exec starts a new process in the container and does not effect the process linked to the container lifetime
+- Alpine - 5MB Linux image. apk is the package manager for this OS
+- '--publish' is always in the HOST:CONTAINER format 
+- docker network connect Dynamically creates a NIC in a container on an existing virtual network
+
+
 Further reading 
 https://www.level-up.one/dockers-monitoring-tools/
+https://docs.docker.com/engine/docker-overview/
