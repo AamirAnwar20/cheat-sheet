@@ -1,0 +1,112 @@
+Shell scripting
+
+ls -l | awk 'NR>1 {print $1, $NF}'
+awk '$2~/i/' {print}' -> Look for i in the 2nd coloumn for every row
+
+chown : change owner of a file
+chgrp : Change group of a file
+
+myvar=3 : assign a value to a variable on the command line
+echo "Value is $myvar" // Output variable value
+unset : Unset a variable 
+echo ${var} : Better way to access variables
+$ : Expands the input given to it
+
+
+b=$(command) : Command substitution, execute the command in the brackets and store the result in b
+echo "`command`" also does command substitution [Avoid using this]
+read myvar : Using STDIN to assign a value to myvar
+	-s : password input
+	-p : placeholder	
+
+$(()) : Arithmetic expansion
+3**2 : 3 to the power of 2
+$((number++)) : Prints then increments the value
+$((++number)) : Increments first
+
+if [ condition ]; then
+	// do something
+fi
+
+if [ condition ]; then
+	// do something
+else 
+	// do this
+fi
+
+if [ condition ]; then
+	// do something
+	elif [ condition ]; then
+		// do this
+fi
+
+Equality operators
+	eq
+	nq
+	lt
+	gt
+	ge
+	le
+
+exit : Exit script
+
+Logical or operator
+if [ $age -lt 0 -o $age -gt 200]; then
+	// do this
+fi 
+-a : Logical AND
+== works on string comparison
+
+-z : Checks if a string is empty
+IMPORTANT : -z "$str", Use commas when doing a comparison with variables
+if [ -e $myfile] : Check if a file exists
+if [ ! -e $myfile] : Check if a file does not exist
+if [ -d $myfile] : Check if a file is a directory
+if [ -r $myfile] : Check if a file is readable
+-w : Is a file writable
+-x : Is a file executable
+-s : Is a file not empty?
+
+for i in {1,2,3,4}
+do
+	// Do something with $i
+done
+
+for i in {1..9}
+
+break command is available
+
+while [ condition ];
+do
+	// something
+done
+sleep command
+
+Switch case
+Can use regex, logical checks for matching cases
+case $choice in
+	1)
+		// do something
+		;;
+	*) 
+		// default 
+
+esac
+
+Exit status
+0 - success
+
+Functions 
+
+mydate() {
+	
+}
+mydate
+$? holds the last return value
+local keyword : Restrict scope
+
+
+*** Notes *** 
+Can assign functions to variables
+./script : This just gives the shell the locaiton of the executable. ./ is not a program
+

@@ -252,6 +252,7 @@
 - telnet
 - awk
 - xargs
+- wall
 
 
 
@@ -277,7 +278,6 @@ When you start a job in the background, the job number and pid are sent to stdou
 %- is the previous job
 Cron - time based scheduling system that starts when the system boots
 /etc/sudoers contains a list of users and what commands those users can run 
-Shell history is extremely useful.
 Bash keeps history in memory and only writes to disk on exit - [~/.bash_history, ~/.history, ~/.histfile]
 RPM Package format - RedHat, CentOS, Fedora, Oracle Linux, Scientific Linux
 To install or remove software you need root privileges 
@@ -416,6 +416,19 @@ Ping sends ICMP packets
 tcpdump - packet sniffer
 
 
+*** Special Permissions ***
+Setuid - Start the process assuming the role of the process owner 
+When you start a process it starts with your UID and GID
+chsh, ping and /etc/passwd use setuid
+Setuid Does not work with shell scripts
+permission bit 4777 is really really bad
+to find all the files with the setgid permission bit set do find / -perm /2000 -ls
+child directories inherit gid from parent directories
+Great for working with groups. Allows you to centrally manage group related permissions
+Tripwire - file integrity checker
+AIDE, OSSSEC, Samhain, Package managers can help in identifying vulnerable files
+Sticky bit - Used on a directory to only allow the directory, file owner or the root user to rename or delete the file
+
 
 *** Shell script ***
 Commands listed in a shell script are executed by an interpreter, which here is the shell itself
@@ -429,6 +442,7 @@ sudo !! : Repeat as root
 !$ : Last item interacted with in a command line
 sshd - SSH daemon or server process
 sticky bit
+If a permission letter is in caps then it means that the bit is NOT set
 
 
 TODO 
