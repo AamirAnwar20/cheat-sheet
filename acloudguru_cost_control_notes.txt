@@ -1,0 +1,113 @@
+*** ACloud Guru Cost Control ***
+
+Solution design
+- Have a clear bill of materials (BOM) divided into prod and dev costs
+- Link to AWS Calculator
+- Review project after lauch at spaced intervals
+
+You have to enable IAM access to billing and policy to restrict access
+Create a group, add a policy to that group and add users to that group
+S3 Bucket for billing logs which should have the Special bucket policy attached
+--output table : Use this to format the output of cli commands
+Clearly define your tagging standard [first step to all of this] and share this with the team
+Tag standard
+	Name
+	Purpose : web, app, mobileAPI
+	Project : App1, NewApp2
+	Creator : name of person
+	Environment : production,staging,dev
+	Freetext: Comments 
+RDS - Copy tags to snapshots
+
+Tools
+	AWS Cost Explorer
+	Budgets
+	Cost Reports
+
+https://github.com/GorillaStack/auto-tag
+https://github.com/Answers4AWS/graffiti-monkey
+https://github.com/joseph-holland/lambda-graffiti-monkey
+Cloudcheckr
+Cloudability
+CloudHealth
+Netflix - ICE
+https://github.com/evancraw
+https://github.com/Teevity/ice
+
+
+Types of cost
+	Time based
+	Consumption based
+
+EC2
+	instance hours
+	storage
+	data transfer
+	licensing
+Aim to be stateless
+EC2instances.info // Better website
+
+Optimising EC2
+	Reduce instance size
+		Cloudwatch - CPU util, Network throughput and memory stats(datadog or new relic)
+	Reduce instance hours - autoscaling
+	Turn off dev machines when not in use
+	Use spotinst
+		spotblocks
+		spotfleet
+	Clean up storage or use EFS
+	Data transfter costs - use a cdn 
+	Avoid elastic ips
+	Licensing
+	Some instance types have optimised EBS for free. Use these
+	Each s3 bucket should have a lifecycle policy
+	s3 analytics - suggest lifecycle policies
+	dynamodb autoscale tools
+	trusted advisor - find idle instances
+
+https://github.com/fairfaxmedia/cloudcycler
+https://www.vaultsolutions.info/blog/post/AWS%20billing%20tools/
+
+Serverless vs Containerised vs EC2
+Serverless
+	API Gateway
+	Lambda
+	DynamoDB
+	Kinesis (stream)
+	S3
+	SQS
+	SNS
+	SES
+
+RDS downtime due to failover 
+Site hosting - Mardown => Generate html site => Serve via s3 => Use cloudfront if it becomes popular
+Note: Designing for cost2 has a great serverless solution for a blog
+ECS + Spotfleet + Autoscaling: Kicakss savings
+EC2 : 
+	Small instances
+	autoscaling 
+	Stateless (cattle not pets)
+	Build AMIs with Packer which creates an image with all your software installed
+	Packer pipeline : Autoscaling launch configuration with an updated AMI
+	Consider t2 for variable load apps 
+	Autoscaling policy : CPU 70% - Launch spot instances, CPU 90% - Launch on demand
+	What is our ec2 launch time?
+EBS : 
+	You get 3 iops per GB of gp2 storage 
+	Overprovisioned gp2 is cheaper than actual piops
+
+memcached in RDS? :/
+S3 Lifecycle policy
+Use cheaper regions - Cloudfront price classes
+Use cloudformation to deploy environments 
+Try to lean towards managed solutions
+Cloud search? Managed search
+Cognito?
+Athena - A console to query S3
+
+*** Accounting tricks *** 
+Group accounts together by using 'organisations'. This creates a master account which is billed
+On S3, as your usage goes up, you pay less (volume discounts)
+Trusted Advisor
+Currency Conversion
+

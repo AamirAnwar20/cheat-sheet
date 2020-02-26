@@ -1,0 +1,103 @@
+
+_________                 __                   __  .__        .__                __  .__               
+\_   ___ \  ____  _______/  |_    ____ _______/  |_|__| _____ |__| ___________ _/  |_|__| ____   ____  
+/    \  \/ /  _ \/  ___/\   __\  /  _ \\____ \   __\  |/     \|  |/  ___/\__  \\   __\  |/  _ \ /    \ 
+\     \___(  <_> )___ \  |  |   (  <_> )  |_> >  | |  |  Y Y  \  |\___ \  / __ \|  | |  (  <_> )   |  \
+ \______  /\____/____  > |__|    \____/|   __/|__| |__|__|_|  /__/____  >(____  /__| |__|\____/|___|  /
+        \/           \/                |__|                 \/        \/      \/                    \/ 
+
+
+
+*** Theory ***
+[x] Figure out tagging hierarchy. What is the schema here? 
+- Weekly cost reduction update
+- Lambda to autotag resources on creation
+- Tag ebs volumes based on the ec2 instance they're attached to
+- Elastic search autoscaling? Spotinst?
+- Remove unattached EBS volume after 3 notifications and x days
+- Remove unused EBS snapshots
+
+
+*** General ***
+	- Remove unused elastic ips
+
+*** Solr ***
+	1. Scale down clusters if possible
+	2. Resize instances
+	3. i-0095456c83c3a3ed3 is possibly unused. [Stopped]
+	4. Put tagging on all the resources Solr is using - ELBs, EC2, S3, Lambda
+	5. Move Solr disks to gp2 and clean up any disks that might be being used
+	6. Put cost tags on solr (terraform launch template and master. Manually on others)
+
+*** Sweep elasticache  ***
+	1. Checkout elasticache in runnr account
+		shrink prod-carthero instance size
+	2. Remove one more shard from production-o2 tonight
+	3. zanalytics-clustered - remove one shard and one replica
+	4. nps - Remove replica?
+
+
+*** Sweep RDS ***
+	1. Create a planned event for known rds instances on the zomato account with the cost benefits of each action. Also mention the daily burn per account
+	[x] SMS aurora deletion
+	3. Runnr RDS 
+		readreplicavpcprodstats1 used?
+		readreplicavpcprodstats used?
+		rdsvpcprodstats-analytics used?
+		restored-2020-02-20-20-00-26 delete after use. This is on for the entire day
+		notificationservice downsize
+	4. Downsize prod-infinityservice-cluster as not being used. Then give the infinity team a deadline post which you can remove the instance. Also need to take a backup
+	5. Delete prod-chatbackend-service-cluster-instance-2 and aurora-zomato-chat-reader
+	6. Downsize https://ap-southeast-1.console.aws.amazon.com/rds/home?region=ap-southeast-1#database:id=userservicedb-instance-1;is-cluster=false;tab=monitoring
+	7. Delete one read replica in aurora-zomatogolddb cluster
+	8. Downsize Videoservice RDS (Unused reader. Can we downsize to t2?)
+
+
+
+*** Sweep cassandra *** 
+1. Reduce iops
+2. Reduce ebs volumes 
+3. move to gp2 from io1
+
+Task 1:
+	check the current iops over 7 days, scale it down according to 70% utilization, 
+	if iops limit is < 3x of the disk then move to gp2
+
+Task 2:
+	check the instance size cpu utilization if <30% then scale it down
+
+- Change disk type to gp2 on old cassandra cluster
+- Reduce PIOPS on profile store cassndra
+- Add cost allocation tags to cassandra clusters
+- evaluate the scaledown parameters based on last 2 months data
+- evaluate the optimizations that can be done
+- Reduce nodes from old cassandra cluster
+
+
+*** Observability ***
+- Move to spotinst
+- Autoscaling policy. Shut down at night time?
+
+*** Ideas ***
+Terminate stopped ec2 instances
+Send notifications about spending limits using AWS Budgets.
+Not all resources support tags. For a list of resources that can be tagged, see User-Defined Cost Allocation Tags.
+https://aws.amazon.com/answers/account-management/aws-tagging-strategies/
+https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html
+Also in the Console -> billing and cost console -> navigation -> cost allocation tags -> Refresh. Try that it may jump start them.
+https://aws.amazon.com/blogs/aws/new-aws-resource-tagging-api/
+https://aws.amazon.com/blogs/aws/aws-config-rules-dynamic-compliance-checking-for-cloud-resources/
+
+
+*** EC2 clean up *** 
+
+Unknown ec2 instances 
+	kfnode3?
+	gunjan - httpbin
+	auth.zomato.com
+	ApacheCanary?
+
+[x] Delete ec2 instance Solr_Cluster_2_v2 
+
+
+

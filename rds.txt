@@ -1,0 +1,19 @@
+The basic building block of Amazon RDS is the DB instance
+Your DB instance can contain multiple user-created databases
+Each DB instance runs a DB engine
+The computation and memory capacity of a DB instance is determined by its DB instance class.
+DB instance storage comes in three types: Magnetic, General Purpose (SSD), and Provisioned IOPS (PIOPS). 
+You can run your DB instance in several Availability Zones, an option called a Multi-AZ deployment.
+Amazon RDS uses Network Time Protocol (NTP) to synchronize the time on DB Instances.
+
+
+Downsize user-service rds master 
+	- Avoid peak time
+	- Check the endpoint being used in user-service
+	- Trigger a failover to switch the master 
+	- Downsize the previous master 
+
+	Jumbo creates a db instance from a backup of a master to perform a dump
+4 TiDB clusters - Analytics based queries help
+
+videoservice-aurora--cluster
